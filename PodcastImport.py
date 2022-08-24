@@ -1,4 +1,3 @@
-import os
 from airflow.decorators import dag, task
 import pendulum
 import requests
@@ -14,7 +13,6 @@ from airflow.providers.postgres.hooks.postgres import PostgresHook
     catchup=False,
 )
 def podcast_summary():
-
     create_database = PostgresOperator(
         task_id="create_table_postgres",
         sql=r"""
@@ -71,7 +69,7 @@ def podcast_summary():
     podcast_episodes = get_episodes()
     create_database.set_downstream(podcast_episodes)
     load_episodes(podcast_episodes)
-    #download_episodes(podcast_episodes)
+    # download_episodes(podcast_episodes)
 
 
 summary = podcast_summary()
