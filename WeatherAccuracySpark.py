@@ -1,7 +1,8 @@
 from datetime import datetime
-from airflow import DAG
+from airflow.models import DAG
 from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
 from airflow.operators.empty import EmptyOperator
+from airflow.sensors.filesystem import FileSensor
 import pendulum
 
 
@@ -31,6 +32,16 @@ start_DAG = EmptyOperator(
     task_id='start',
     dag=dag)
 
+waiting_for_file = FileSensor(
+    task_id="waiting_for_file",
+    filepath='start.txt',
+    fs_conn_id="fs_resources",
+    poke_interval=10,
+    timeout=60 * 60,
+    soft_fail=True,
+    dag=dag
+)
+
 submit_spark_job = SparkSubmitOperator(
     application="/usr/local/spark/resources/WeatherAccuracy-assembly-0.1.0.jar",
     name="SparkCalculation",
@@ -46,4 +57,4 @@ submit_spark_job = SparkSubmitOperator(
     java_class="Boot",
     dag=dag
 )
-start_DAG >> submit_spark_job
+start_DAG >> waiting_for_file >> submit_spark_job
