@@ -33,8 +33,8 @@ start_DAG = EmptyOperator(
     dag=dag)
 
 submit_spark_job = SparkSubmitOperator(
-    application="/usr/local/spark/resources/MeanQuotes-assembly-0.1.0.jar",
-    name="SparkMACalculation",
+    application="/usr/local/spark/resources/ParseForexResponse-assembly-0.1.0.jar",
+    name="ETLForexEurUsd",
     conf={'spark.submit.deployMode': 'cluster',
           'spark.driver.memory': '1g',
           'spark.executor.memory': '1g',
